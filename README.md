@@ -277,12 +277,7 @@ Use compatible package versions for your installed Python version. The actual `r
 ## 👩‍💻 Author
 
 **Soumya Basappa Mattikoppa**  
-Crevavi Technologies
-
-## 📄 License
-
-Add a suitable open-source license before distributing or reusing this project publicly.
-
+Software Engineer
 ---
 
 **TuberGuard AI — Detect Early. Treat Smart. Grow Better.**
