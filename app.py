@@ -1,0 +1,126 @@
+
+"""
+Company: Crevavi Technologies
+Project: Potato Disease Detection using CNN
+Step: Gradio Application with Recommendations
+"""
+
+import json
+from pathlib import Path
+
+import gradio as gr
+import numpy as np
+import tensorflow as tf
+from PIL import Image
+
+from disease_recommendations import get_recommendation
+
+
+# Project paths
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "models" / "potato_cnn_final.keras"
+CLASS_PATH = BASE_DIR / "models" / "class_names.json"
+
+# Load trained model
+model = tf.keras.models.load_model(MODEL_PATH)
+
+# Load class names
+with open(CLASS_PATH, "r") as file:
+    class_names = json.load(file)
+
+
+def predict_disease(image):
+    if image is None:
+        return "Please upload a potato image.", {}, "No recommendations available."
+
+    # Prepare image
+    image = image.convert("RGB")
+    image = image.resize((128, 128))
+
+    image_array = np.array(image, dtype=np.float32)
+    image_array = np.expand_dims(image_array, axis=0)
+
+    # Predict disease
+    predictions = model.predict(image_array, verbose=0)[0]
+
+    predicted_index = int(np.argmax(predictions))
+    disease_name = class_names[predicted_index]
+    confidence = float(predictions[predicted_index]) * 100
+
+    # Get treatment recommendations
+    advice = get_recommendation(disease_name)
+
+    prediction_text = (
+        f"Predicted condition: {disease_name}\n"
+        f"Model confidence: {confidence:.2f}%\n\n"
+        "This is an AI prediction, not a confirmed diagnosis."
+    )
+
+    # Display probabilities for every class
+    probabilities = {
+        class_names[i]: float(predictions[i])
+        for i in range(len(class_names))
+    }
+
+    # Build treatment and fertilizer text
+    recommendation_text = (
+        "TREATMENT AND MANAGEMENT\n\n"
+        + "\n".join(
+            f"- {item}" for item in advice["treatment"]
+        )
+        + "\n\nFERTILIZER GUIDANCE\n\n"
+        + advice["fertilizer"]
+        + "\n\nPREVENTION\n\n"
+        + advice["prevention"]
+        + "\n\nImportant: Confirm the condition with a local "
+          "agricultural expert before applying pesticides or "
+          "changing soil pH."
+    )
+
+    return prediction_text, probabilities, recommendation_text
+
+
+# Gradio interface
+with gr.Blocks(title="Potato Disease Detection") as app:
+
+    gr.Markdown("# Potato Disease Detection using CNN")
+    gr.Markdown(
+        "Upload a potato tuber image to predict its category "
+        "and view general management recommendations."
+    )
+
+    with gr.Row():
+        image_input = gr.Image(
+            type="pil",
+            label="Upload Potato Image"
+        )
+
+        with gr.Column():
+            prediction_output = gr.Textbox(
+                label="Prediction Result",
+                lines=4
+            )
+
+            probability_output = gr.Label(
+                label="Class Probabilities",
+                num_top_classes=7
+            )
+
+    recommendation_output = gr.Textbox(
+        label="Treatment, Fertilizer and Prevention",
+        lines=15
+    )
+
+    predict_button = gr.Button("Detect Disease")
+
+    predict_button.click(
+        fn=predict_disease,
+        inputs=image_input,
+        outputs=[
+            prediction_output,
+            probability_output,
+            recommendation_output
+        ]
+    )
+
+app.launch(share="True")

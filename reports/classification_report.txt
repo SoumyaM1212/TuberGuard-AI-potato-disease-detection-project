@@ -1,0 +1,13 @@
+                  precision    recall  f1-score   support
+
+     Black Scurf       0.38      0.30      0.33        10
+        Blackleg       0.20      0.11      0.14         9
+     Common Scab       0.29      0.20      0.24        10
+         Dry Rot       0.45      0.56      0.50         9
+Healthy Potatoes       0.92      1.00      0.96        12
+   Miscellaneous       0.29      0.33      0.31        12
+        Pink Rot       0.36      0.50      0.42        10
+
+        accuracy                           0.44        72
+       macro avg       0.41      0.43      0.41        72
+    weighted avg       0.42      0.44      0.43        72
