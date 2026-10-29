@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # 🥔 TuberGuard AI
 ### Intelligent Potato Disease Detection and Treatment Recommendation System
 
@@ -280,7 +280,5 @@ Use compatible package versions for your installed Python version. The actual `r
 Software Engineer
 ---
 
-**TuberGuard AI — Detect Early. Treat Smart. Grow Better.**
-=======
-# TuberGuard-AI-potato-disease-detection-project
->>>>>>> a0d65e189c136ac27073743ed31eb9b1b7e8cc9c
+TuberGuard AI — Detect Early. Treat Smart. Grow Better.
+
